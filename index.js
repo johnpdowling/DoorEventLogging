@@ -62,10 +62,10 @@ DoorEventLogging.prototype.init = function (config) {
 	};
  
 	var overlay = {
-			deviceType: "text",
+			deviceType: "sensorMultilevel",
 			metrics: {
 				icon: "doorlockcontrol",
-				text: ""
+				level: "0"
 			}	  
 	};
 	this.vDev = this.controller.devices.create({
@@ -120,8 +120,8 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 			   case 25: //rf lock open operation
 				   console.log("DoorEventLogging", "hot damn got me an event!");
 				   console.log("DoorEventLogging", alarmData[6].eventString.value);
-				   //self.vDev.set("metrics:user", alarmUser);
-				   self.vDev.set("metrics:text", alarmData[6].eventString.value);
+				   self.vDev.set("metrics:level", alarmUser);
+				   //self.vDev.set("metrics:text", alarmData[6].eventString.value);
 				   break;
 			   default:
 				   //nothing
