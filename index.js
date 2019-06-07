@@ -55,14 +55,24 @@ DoorEventLogging.prototype.init = function (config) {
     	self.doorlogDevice(this.controller.devices.get(devId));
     });
 	console.log("DoorEventLogging","vdev create");
+	var defaults = {
+		metrics: {
+			title: self.getInstanceTitle()
+		}
+	};
+ 
+	var overlay = {
+			deviceType: "DoorEventDevice",
+			metrics: {
+				icon: "lock",
+				user: -1,
+				event_string: ""
+			}	  
+	};
 	this.vDev = this.controller.devices.create({
 		deviceId: "DoorEventDevice_" + this.id,
-		deviceType: "DoorEventDevice",
-		metrics: {
-			icon: "lock",
-			user: -1,
-			event_string: ""
-		},
+		defaults: defaults,
+		overlay: overlay,
 		moduleId: this.id
 	});
 };
