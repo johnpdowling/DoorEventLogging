@@ -54,6 +54,10 @@ DoorEventLogging.prototype.init = function (config) {
     this.config.sourceDevices.forEach(function(devId) {
     	self.doorlogDevice(this.controller.devices.get(devId));
     });
+	console.log("DoorEventLogging","vdev create");
+	executeFile(this.moduleBasePath()+"/DoorEventDevice.js");
+	this.vdev = new DoorEventDevice("DoorEvent", this.controller);
+	this.controller.registerDevice(this.vdev);
 };
 
 DoorEventLogging.prototype.stop = function () {
