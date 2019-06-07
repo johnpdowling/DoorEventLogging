@@ -62,11 +62,10 @@ DoorEventLogging.prototype.init = function (config) {
 	};
  
 	var overlay = {
-			deviceType: "DoorEventDevice",
+			deviceType: "text",
 			metrics: {
 				icon: "lock",
-				user: -1,
-				event_string: ""
+				text: ""
 			}	  
 	};
 	this.vDev = this.controller.devices.create({
@@ -122,7 +121,7 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 				   console.log("DoorEventLogging", "hot damn got me an event!");
 				   console.log("DoorEventLogging", alarmData[6].eventString.value);
 				   //this.vDev.set("metrics:user", alarmUser);
-				   this.vDev.set("metrics:event_string", alarmData[6].eventString.value);
+				   this.vDev.set("metrics:text", alarmData[6].eventString.value);
 				   break;
 			   default:
 				   //nothing
