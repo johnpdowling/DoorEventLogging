@@ -64,7 +64,7 @@ DoorEventLogging.prototype.init = function (config) {
 	var overlay = {
 			deviceType: "text",
 			metrics: {
-				icon: "lock",
+				icon: "doorlockcontrol",
 				text: ""
 			}	  
 	};
@@ -101,16 +101,16 @@ DoorEventLogging.prototype.stop = function () {
 
 //Do the actual doorlog on the physical device
 DoorEventLogging.prototype.doorlog = function(virtualDevice) {
-
+    var self = this;
     var index = this.getDeviceIndex(virtualDevice.id);
     if ( global.ZWave && !isNaN(index) ) {
-	      var binderMethod;
+	var binderMethod;
         var deviceType = virtualDevice.get('deviceType');
         if(deviceType === 'doorlock'){
             binderMethod = function(type) {
                    console.log("DoorEventLogging","loogie doorlock alarm event");
 		   var alarmData = zway.devices[index].Alarm.data;
-		   var alarmUser = -1;
+		   var alarmUser = 0;
 		   switch(alarmData.V1event.alarmType.value){
 			   case 19: //keypad lock open operation
 				   alarmUser = alarmData.V1event.level.value;
@@ -120,8 +120,8 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 			   case 25: //rf lock open operation
 				   console.log("DoorEventLogging", "hot damn got me an event!");
 				   console.log("DoorEventLogging", alarmData[6].eventString.value);
-				   //this.vDev.set("metrics:user", alarmUser);
-				   this.vDev.set("metrics:text", alarmData[6].eventString.value);
+				   //self.vDev.set("metrics:user", alarmUser);
+				   self.vDev.set("metrics:text", alarmData[6].eventString.value);
 				   break;
 			   default:
 				   //nothing
