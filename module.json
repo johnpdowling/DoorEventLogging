@@ -1,0 +1,50 @@
+{
+	"singleton": false,
+	"dependencies": [],
+	"category": "automation",
+	"author": "John Dowling",
+	"homepage": "https://github.com/johnpdowling/DoorEventLogging",
+	"icon": "",
+	"version": "0.0.1",
+	"maturity": "experimental",
+	"repository": {
+		"type": "git",
+		"source": "https://github.com/johnpdowling/DoorEventLogging"
+	},
+	"defaults": {
+                "title": "Door Event Logging",
+                "description": "Some door locks do not respond to DoorLockLogging but do send event updates. This module will do something about that.",
+                "sourceDevices": []
+	},
+	"schema": {
+		"type": "object",
+		"properties": {
+			"sourceDevices": {
+				"type": "array",
+				"items": {
+					"field": "enum",
+					"datasource": "namespaces",
+					"enum": "namespaces:devices_doorlock:deviceId",
+					"required": true
+				}
+			}
+		},
+		"required": false
+	},
+	"options": {
+		"fields": {
+			"sourceDevices": {
+				"label": "List of locks to watch",
+                                "helper": "For door locks sending out alarm events",
+				"fields": {
+					"item": {
+						"type": "select",
+						"datasource": "namespaces",
+						"field": "optionLabels",
+						"optionLabels": "namespaces:devices_doorlock:deviceName"
+					}
+				}
+			}
+		}
+	}
+}
