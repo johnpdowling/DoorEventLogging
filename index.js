@@ -91,7 +91,7 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 			   case 24: //rf lock operation
 			   case 25: //rf lock open operation
 				   console.log("DoorEventLogging","hot damn got me an event!");
-				   console.log("DoorEventLogging",zway.devices[index].Alarm.data.6.eventString);
+				   //console.log("DoorEventLogging",zway.devices[index].Alarm.data.6.eventString);
 				   break;
 			   default:
 				   //nothing
