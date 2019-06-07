@@ -84,7 +84,7 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
         if(deviceType === 'doorlock'){
             binderMethod = function(type) {
                    console.log("DoorEventLogging","loogie doorlock alarm event");
-		   switch((int)zway.devices[index].Alarm.data.V1event.alarmType){
+		   switch(parseInt(zway.devices[index].Alarm.data.V1event.alarmType)){
 			   case 19: //keypad lock open operation
 			   case 21: //manual lock operation (keypad swipe too)
 			   case 22: //manual lock open
