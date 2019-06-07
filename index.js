@@ -121,7 +121,7 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 			   case 25: //rf lock open operation
 				   console.log("DoorEventLogging", "hot damn got me an event!");
 				   console.log("DoorEventLogging", alarmData[6].eventString.value);
-				   this.vDev.set("metrics:user", alarmUser);
+				   //this.vDev.set("metrics:user", alarmUser);
 				   this.vDev.set("metrics:event_string", alarmData[6].eventString.value);
 				   break;
 			   default:
