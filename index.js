@@ -26,6 +26,7 @@ inherits(DoorEventLogging, AutomationModule);
 //Static declations
 _module = DoorEventLogging;
 DoorEventLogging.binderMethods;
+DoorEventLogging.virtualDevices;
 // ----------------------------------------------------------------------------
 // --- Module instance initialized
 // ----------------------------------------------------------------------------
@@ -35,6 +36,7 @@ DoorEventLogging.prototype.init = function (config) {
 
     var self = this;
     this.binderMethods = [];//Hold methods used to bind
+    this.virtualDevices = [];
     console.log("DoorEventLogging: init");
 
     //The boot sequence of ZWay is not well defined.
@@ -52,9 +54,10 @@ DoorEventLogging.prototype.init = function (config) {
 
     //Doorlog all listed devices on each start, this will handle restarts after boot
     this.config.sourceDevices.forEach(function(devId) {
-    	self.doorlogDevice(this.controller.devices.get(devId));
+    	self.doorlogDevice(this.controller.devices.get(devId));	
     });
-	console.log("DoorEventLogging","vdev create");
+    
+	console.log("DoorEventLogging","vdev(s) create");
 	var defaults = {
 		metrics: {
 			title: self.getInstanceTitle()
@@ -68,12 +71,21 @@ DoorEventLogging.prototype.init = function (config) {
 				level: "0"
 			}	  
 	};
-	this.vDev = this.controller.devices.create({
-		deviceId: "DoorEventDevice_" + this.id,
+	this.config.sourceDevices.forEach(function(devId) {
+    	   var newUserVDev = this.controller.devices.create({
+		deviceId: "DoorEventUserDevice_" + devId,
 		defaults: defaults,
 		overlay: overlay,
 		moduleId: this.id
-	});
+	    });
+	    var newAlarmTypeVDev = this.controller.devices.create({
+		deviceId: "DoorEventTypeDevice_" + devId,
+		defaults: defaults,
+		overlay: overlay,
+		moduleId: this.id
+	    });
+	    self.virtualDevices.push([ newUserVDev, newAlarmTypeVDev ]);
+        });
 };
 
 DoorEventLogging.prototype.stop = function () {
@@ -87,11 +99,15 @@ DoorEventLogging.prototype.stop = function () {
     //Unregister for device creation
     this.controller.devices.off('created',this.deviceCreated);
     this.controller.devices.off('removed',this.deviceDeleted);
-	//remove vdev
-	if (this.vDev) {
-		this.controller.devices.remove(this.vDev.id);
-		this.vDev = null;
-	}
+    //remove vdev
+    this.virtualDevices.forEach(function(vPair) {
+    	this.controller.devices.remove(vPair[0].id);
+    	vPair[0] = null;
+    	this.controller.devices.remove(vPair[1].id);
+    	vPair[1] = null;
+    });
+    this.virtualDevices = [];
+
     DoorEventLogging.super_.prototype.stop.call(this);
 };
 
@@ -108,7 +124,7 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
         var deviceType = virtualDevice.get('deviceType');
         if(deviceType === 'doorlock'){
             binderMethod = function(type) {
-                   console.log("DoorEventLogging","loogie doorlock alarm event");
+                   console.log("DoorEventLogging","doorlock alarm event");
 		   var alarmData = zway.devices[index].Alarm.data;
 		   var alarmUser = 0;
 		   switch(alarmData.V1event.alarmType.value){
@@ -118,17 +134,14 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 			   case 22: //manual lock open
 			   case 24: //rf lock operation
 			   case 25: //rf lock open operation
-				   console.log("DoorEventLogging", "hot damn got me an event!");
-				   console.log("DoorEventLogging", alarmData[6].eventString.value);
-				   self.vDev.set("metrics:level", alarmUser);
-				   //self.vDev.set("metrics:text", alarmData[6].eventString.value);
+				   self.virtualDevices[index][0].set("metrics:level", alarmUser);
+				   self.virtualDevices[index][1].set("metrics:level", alarmData.V1event.alarmType.value);
 				   break;
 			   default:
 				   //nothing
-				   console.log("DoorEventLogging","dang, unknown alarm type: " + alarmType);
+				   console.log("DoorEventLogging","unknown alarm type: " + alarmData.V1event.alarmType.value);
 				   break;
 	           }
-                   //zway.devices[index].DoorLock.Get(); //This call will poll and update the zway UI. Useful since most alarms are lock/unlock events
                 };
             zway.devices[index].Alarm.data.V1event.bind(binderMethod);
         }
