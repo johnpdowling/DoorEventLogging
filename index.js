@@ -16,26 +16,26 @@ Description:
 // --- Class definition, inheritance and setup
 // ----------------------------------------------------------------------------
 
-function DoorEventLogger (id, controller) {
+function DoorEventLogging (id, controller) {
     // Call superconstructor first (AutomationModule)
-    DoorEventLogger.super_.call(this, id, controller);
+    DoorEventLogging.super_.call(this, id, controller);
 }
 
-inherits(DoorEventLogger, AutomationModule);
+inherits(DoorEventLogging, AutomationModule);
 
 //Static declations
-_module = DoorEventLogger;
-DoorEventLogger.binderMethods;
+_module = DoorEventLogging;
+DoorEventLogging.binderMethods;
 // ----------------------------------------------------------------------------
 // --- Module instance initialized
 // ----------------------------------------------------------------------------
 
-DoorEventLogger.prototype.init = function (config) {
-    DoorEventLogger.super_.prototype.init.call(this, config);
+DoorEventLogging.prototype.init = function (config) {
+    DoorEventLogging.super_.prototype.init.call(this, config);
 
     var self = this;
     this.binderMethods = [];//Hold methods used to bind
-    console.log("DoorEventLogger: init");
+    console.log("DoorEventLogging: init");
 
     //The boot sequence of ZWay is not well defined.
     //This method is used to detect device creation on boot and niffle any device on the list
@@ -56,9 +56,9 @@ DoorEventLogger.prototype.init = function (config) {
     });
 };
 
-DoorEventLogger.prototype.stop = function () {
+DoorEventLogging.prototype.stop = function () {
 
-    console.log("DoorEventLogger: stop() called");
+    console.log("DoorEventLogging: stop() called");
     //Undoorlog any doorlogged devices
     if(this.config.sourceDevices.length) {
 	this.unDoorlog(this.config.sourceDevices);
@@ -67,7 +67,7 @@ DoorEventLogger.prototype.stop = function () {
     //Unregister for device creation
     this.controller.devices.off('created',this.deviceCreated);
     this.controller.devices.off('removed',this.deviceDeleted);
-    DoorEventLogger.super_.prototype.stop.call(this);
+    DoorEventLogging.super_.prototype.stop.call(this);
 };
 
 // ----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ DoorEventLogger.prototype.stop = function () {
 // ----------------------------------------------------------------------------
 
 //Do the actual doorlog on the physical device
-DoorEventLogger.prototype.doorlog = function(virtualDevice) {
+DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 
     var index = this.getDeviceIndex(virtualDevice.id);
     if ( global.ZWave && !isNaN(index) ) {
@@ -83,7 +83,7 @@ DoorEventLogger.prototype.doorlog = function(virtualDevice) {
         var deviceType = virtualDevice.get('deviceType');
         if(deviceType === 'doorlock'){
             binderMethod = function(type) {
-                   console.log("DoorEventLogger","loogie doorlock alarm event");
+                   console.log("DoorEventLogging","loogie doorlock alarm event");
                    //zway.devices[index].DoorLock.Get(); //This call will poll and update the zway UI. Useful since most alarms are lock/unlock events
                 };
             zway.devices[index].Alarm.data.V1event.bind(binderMethod);
@@ -92,11 +92,11 @@ DoorEventLogger.prototype.doorlog = function(virtualDevice) {
     }
 };
 
-DoorEventLogger.prototype.unDoorlog = function(UDList) {
+DoorEventLogging.prototype.unDoorlog = function(UDList) {
     var self = this;
     if(UDList.length)
     {
-	    console.log("DoorEventLogger: unDoorlogging existing devices");
+	    console.log("DoorEventLogging: unDoorlogging existing devices");
 	    UDList.forEach(function(vDevId) {
 	      var index = self.getDeviceIndex(vDevId);
 	      var unBinder = null;
@@ -106,10 +106,10 @@ DoorEventLogger.prototype.unDoorlog = function(UDList) {
 		         break;
 		      }
 	      }
-	      console.log("DoorEventLogger: unDoorlogging ", vDevId);
+	      console.log("DoorEventLogging: unDoorlogging ", vDevId);
 	      if (global.ZWave && !isNaN(index) && unBinder !== null ) {
            if (this.controller.devices.get(vDevId).get('deviceType') === 'doorlock') {
-              console.log("DoorEventLogger: unDoorlogging doorlock");
+              console.log("DoorEventLogging: unDoorlogging doorlock");
               zway.devices[index].Alarm.data.V1event.unbind(unBinder);
            }
 	      }
@@ -118,9 +118,9 @@ DoorEventLogger.prototype.unDoorlog = function(UDList) {
 };
 
 //Retrieve the index of the physical device. null if not found
-DoorEventLogger.prototype.getDeviceIndex = function(vdevid) {
+DoorEventLogging.prototype.getDeviceIndex = function(vdevid) {
 	var str = vdevid;
-	console.log("DoorEventLogger: getdeviceindex: ", str);
+	console.log("DoorEventLogging: getdeviceindex: ", str);
 
 	var res = str.split("_");
 	if(res.length != 3 && str[0] != "ZWayVDev")
@@ -130,7 +130,7 @@ DoorEventLogger.prototype.getDeviceIndex = function(vdevid) {
 
 //Doorlog a device if it is in the source list.
 //vdevid is the virtual device and index is the physical device location
-DoorEventLogger.prototype.doorlogDevice = function(vdev) {
+DoorEventLogging.prototype.doorlogDevice = function(vdev) {
 
     if(!vdev) return;
     var sdev;
@@ -143,7 +143,7 @@ DoorEventLogger.prototype.doorlogDevice = function(vdev) {
     });
     if(sdev) {//We have a match
 	//Doorlog this device
-	console.log("DoorEventLogger: Doorlogging device ",vdev.id);
+	console.log("DoorEventLogging: Doorlogging device ",vdev.id);
 	this.doorlog(vdev);
     }
 };
