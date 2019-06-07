@@ -55,9 +55,15 @@ DoorEventLogging.prototype.init = function (config) {
     	self.doorlogDevice(this.controller.devices.get(devId));
     });
 	console.log("DoorEventLogging","vdev create");
-	executeFile(this.moduleBasePath()+"/DoorEventDevice.js");
-	this.vdev = new DoorEventDevice("DoorEvent", this.controller);
-	this.controller.registerDevice(this.vdev);
+	this.vDev = this.controller.devices.create({
+		deviceId: "DoorEventDevice_" + this.id,
+		metrics: {
+			icon: "lock",
+			user: -1,
+			event_string: ""
+		},
+		moduleId: this.id
+	});
 };
 
 DoorEventLogging.prototype.stop = function () {
@@ -71,6 +77,11 @@ DoorEventLogging.prototype.stop = function () {
     //Unregister for device creation
     this.controller.devices.off('created',this.deviceCreated);
     this.controller.devices.off('removed',this.deviceDeleted);
+	//remove vdev
+	if (this.vDev) {
+		this.controller.devices.remove(this.vDev.id);
+		this.vDev = null;
+	}
     DoorEventLogging.super_.prototype.stop.call(this);
 };
 
