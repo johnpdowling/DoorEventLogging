@@ -57,6 +57,7 @@ DoorEventLogging.prototype.init = function (config) {
 	console.log("DoorEventLogging","vdev create");
 	this.vDev = this.controller.devices.create({
 		deviceId: "DoorEventDevice_" + this.id,
+		deviceType: "DoorEventDevice",
 		metrics: {
 			icon: "lock",
 			user: -1,
