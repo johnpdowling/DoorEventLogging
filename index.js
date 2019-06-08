@@ -185,13 +185,9 @@ DoorEventLogging.prototype.getDeviceIndex = function(vdevid) {
 DoorEventLogging.prototype.doorlogDevice = function(vdev) {
 
     if(!vdev) return;
-    var sdev;
-    //Should this device be doorlogged? Look for it in the source list
-    	if(this.config.sourceDevice === vdev.id) {
-	    sdev = adev;
-	    return;
-	}
-    if(sdev) {//We have a match
+	
+    //Should this device be doorlogged? Look for it in the source
+    if(this.config.sourceDevice === vdev.id) {//We have a match
 	//Doorlog this device
 	console.log("DoorEventLogging: Doorlogging device ",vdev.id);
 	this.doorlog(vdev);
