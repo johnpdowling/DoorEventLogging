@@ -26,7 +26,6 @@ inherits(DoorEventLogging, AutomationModule);
 //Static declations
 _module = DoorEventLogging;
 DoorEventLogging.binderMethods;
-DoorEventLogging.virtualDevices;
 // ----------------------------------------------------------------------------
 // --- Module instance initialized
 // ----------------------------------------------------------------------------
@@ -53,11 +52,9 @@ DoorEventLogging.prototype.init = function (config) {
     
 
     //Doorlog all listed devices on each start, this will handle restarts after boot
-    this.config.sourceDevices.forEach(function(devId) {
-    	self.doorlogDevice(this.controller.devices.get(devId));	
-    });
+    self.doorlogDevice(this.controller.devices.get(this.config.sourceDevice));
     
-	console.log("DoorEventLogging","vdev(s) create");
+	console.log("DoorEventLogging","vdev create");
 	var defaults = {
 		metrics: {
 			title: self.getInstanceTitle()
@@ -71,21 +68,18 @@ DoorEventLogging.prototype.init = function (config) {
 				level: "0"
 			}	  
 	};
-	this.config.sourceDevices.forEach(function(devId) {
-    	   var newUserVDev = this.controller.devices.create({
-		deviceId: "DoorEventUserDevice_" + devId,
+	this.userVDev = this.controller.devices.create({
+		deviceId: "DoorEventUserDevice_" + this.sourceDevice.id,
 		defaults: defaults,
 		overlay: overlay,
 		moduleId: this.id
 	    });
-	    var newAlarmTypeVDev = this.controller.devices.create({
-		deviceId: "DoorEventTypeDevice_" + devId,
+	this.alarmTypeVDev = this.controller.devices.create({
+		deviceId: "DoorEventTypeDevice_" + this.sourceDevice.id,
 		defaults: defaults,
 		overlay: overlay,
 		moduleId: this.id
 	    });
-	    self.virtualDevices.push([ newUserVDev, newAlarmTypeVDev ]);
-        });
 };
 
 DoorEventLogging.prototype.stop = function () {
@@ -100,13 +94,14 @@ DoorEventLogging.prototype.stop = function () {
     this.controller.devices.off('created',this.deviceCreated);
     this.controller.devices.off('removed',this.deviceDeleted);
     //remove vdev
-    this.virtualDevices.forEach(function(vPair) {
-    	this.controller.devices.remove(vPair[0].id);
-    	vPair[0] = null;
-    	this.controller.devices.remove(vPair[1].id);
-    	vPair[1] = null;
-    });
-    this.virtualDevices = [];
+    if (this.userVDev) {
+    	this.controller.devices.remove(this.userVDev.id);
+    	this.userVDev = null;
+    }
+    if (this.alarmTypeVDev) {
+    	this.controller.devices.remove(this.alarmTypeVDev.id);
+    	this.alarmTypeVDev = null;
+    }
 
     DoorEventLogging.super_.prototype.stop.call(this);
 };
@@ -134,8 +129,8 @@ DoorEventLogging.prototype.doorlog = function(virtualDevice) {
 			   case 22: //manual lock open
 			   case 24: //rf lock operation
 			   case 25: //rf lock open operation
-				   self.virtualDevices[index][0].set("metrics:level", alarmUser);
-				   self.virtualDevices[index][1].set("metrics:level", alarmData.V1event.alarmType.value);
+				   self.userVDev.set("metrics:level", alarmUser);
+				   self.alarmTypeVDev.set("metrics:level", alarmData.V1event.alarmType.value);
 				   break;
 			   default:
 				   //nothing
