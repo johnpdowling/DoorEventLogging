@@ -86,8 +86,8 @@ DoorEventLogging.prototype.stop = function () {
 
     console.log("DoorEventLogging: stop() called");
     //Undoorlog any doorlogged devices
-    if(this.config.sourceDevices.length) {
-	this.unDoorlog(this.config.sourceDevices);
+    if(this.config.sourceDevices) {
+	this.unDoorlog([this.config.sourceDevice]);
 	this.binderMethods = [];
     }
     //Unregister for device creation
