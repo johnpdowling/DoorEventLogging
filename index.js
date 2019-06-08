@@ -35,7 +35,7 @@ DoorEventLogging.prototype.init = function (config) {
 
     var self = this;
     this.binderMethods = [];//Hold methods used to bind
-    this.virtualDevices = [];
+    
     console.log("DoorEventLogging: init");
 
     //The boot sequence of ZWay is not well defined.
@@ -52,7 +52,7 @@ DoorEventLogging.prototype.init = function (config) {
     
 
     //Doorlog all listed devices on each start, this will handle restarts after boot
-    self.doorlogDevice(this.controller.devices.get(this.config.sourceDevice));
+    self.doorlogDevice(this.controller.devices.get(this.config.sourceDevice.id));
     
 	console.log("DoorEventLogging","vdev create");
 	var defaults = {
@@ -69,13 +69,13 @@ DoorEventLogging.prototype.init = function (config) {
 			}	  
 	};
 	this.userVDev = this.controller.devices.create({
-		deviceId: "DoorEventUserDevice_" + this.sourceDevice.id,
+		deviceId: "DoorEventUserDevice_" + this.config.sourceDevice.id,
 		defaults: defaults,
 		overlay: overlay,
 		moduleId: this.id
 	    });
 	this.alarmTypeVDev = this.controller.devices.create({
-		deviceId: "DoorEventTypeDevice_" + this.sourceDevice.id,
+		deviceId: "DoorEventTypeDevice_" + this.config.sourceDevice.id,
 		defaults: defaults,
 		overlay: overlay,
 		moduleId: this.id
