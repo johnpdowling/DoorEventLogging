@@ -52,7 +52,7 @@ DoorEventLogging.prototype.init = function (config) {
     
 
     //Doorlog all listed devices on each start, this will handle restarts after boot
-    self.doorlogDevice(this.controller.devices.get(this.config.sourceDevice.id));
+    self.doorlogDevice(this.controller.devices.get(this.config.sourceDevice));
     
 	console.log("DoorEventLogging","vdev create");
 	var defaults = {
@@ -188,7 +188,7 @@ DoorEventLogging.prototype.doorlogDevice = function(vdev) {
     console.log("DoorEventLogging", "doorlogDevice: ", vdev.id);
     console.log("DoorEventLogging","sourceDevice: ", this.config.sourceDevice);
     //Should this device be doorlogged? Look for it in the source
-    if(this.config.sourceDevice.id === vdev.id) {//We have a match
+    if(this.config.sourceDevice === vdev.id) {//We have a match
 	//Doorlog this device
 	console.log("DoorEventLogging", "Doorlogging device ",vdev.id);
 	this.doorlog(vdev);
