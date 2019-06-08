@@ -180,19 +180,17 @@ DoorEventLogging.prototype.getDeviceIndex = function(vdevid) {
 	return res[2].split("-")[0];
 };
 
-//Doorlog a device if it is in the source list.
+//Doorlog a device if it is our source device.
 //vdevid is the virtual device and index is the physical device location
 DoorEventLogging.prototype.doorlogDevice = function(vdev) {
 
     if(!vdev) return;
     var sdev;
     //Should this device be doorlogged? Look for it in the source list
-    this.config.sourceDevices.forEach(function(adev) {
-	if(adev === vdev.id) {
+    	if(this.config.sourceDevice === vdev.id) {
 	    sdev = adev;
 	    return;
 	}
-    });
     if(sdev) {//We have a match
 	//Doorlog this device
 	console.log("DoorEventLogging: Doorlogging device ",vdev.id);
