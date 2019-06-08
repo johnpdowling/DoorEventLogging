@@ -14,27 +14,24 @@
 	"defaults": {
                 "title": "Door Event Logging",
                 "description": "Some door locks do not respond to DoorLockLogging but do send event updates. This module will do something about that.",
-                "sourceDevices": []
+                "sourceDevice": null
 	},
 	"schema": {
 		"type": "object",
 		"properties": {
-			"sourceDevices": {
-				"type": "array",
-				"items": {
+			"sourceDevice": {
 					"field": "enum",
 					"datasource": "namespaces",
 					"enum": "namespaces:devices_doorlock:deviceId",
 					"required": true
-				}
 			}
 		},
 		"required": false
 	},
 	"options": {
 		"fields": {
-			"sourceDevices": {
-				"label": "List of locks to watch",
+			"sourceDevice": {
+				"label": "Lock to watch",
                                 "helper": "For door locks sending out alarm events",
 				"fields": {
 					"item": {
