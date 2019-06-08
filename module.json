@@ -1,5 +1,5 @@
 {
-	"singleton": true,
+	"singleton": false,
 	"dependencies": [],
 	"category": "automation",
 	"author": "John Dowling",
