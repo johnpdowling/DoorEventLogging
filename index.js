@@ -187,7 +187,7 @@ DoorEventLogging.prototype.doorlogDevice = function(vdev) {
     if(!vdev) return;
 	
     //Should this device be doorlogged? Look for it in the source
-    if(this.config.sourceDevice === vdev.id) {//We have a match
+    if(this.config.sourceDevice.id === vdev.id) {//We have a match
 	//Doorlog this device
 	console.log("DoorEventLogging: Doorlogging device ",vdev.id);
 	this.doorlog(vdev);
