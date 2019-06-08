@@ -33,14 +33,10 @@
 			"sourceDevice": {
 				"label": "Lock to watch",
                                 "helper": "For door locks sending out alarm events",
-				"fields": {
-					"item": {
-						"type": "select",
-						"datasource": "namespaces",
-						"field": "optionLabels",
-						"optionLabels": "namespaces:devices_doorlock:deviceName"
-					}
-				}
+				"type": "select",
+				"datasource": "namespaces",
+				"field": "optionLabels",
+				"optionLabels": "namespaces:devices_doorlock:deviceName"
 			}
 		}
 	}
