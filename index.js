@@ -69,13 +69,13 @@ DoorEventLogging.prototype.init = function (config) {
 			}	  
 	};
 	this.userVDev = this.controller.devices.create({
-		deviceId: "DoorEventUserDevice_" + this.config.sourceDevice.id,
+		deviceId: "DoorEventUserDevice_" + this.config.sourceDevice,
 		defaults: defaults,
 		overlay: overlay,
 		moduleId: this.id
 	    });
 	this.alarmTypeVDev = this.controller.devices.create({
-		deviceId: "DoorEventTypeDevice_" + this.config.sourceDevice.id,
+		deviceId: "DoorEventTypeDevice_" + this.config.sourceDevice,
 		defaults: defaults,
 		overlay: overlay,
 		moduleId: this.id
@@ -186,7 +186,7 @@ DoorEventLogging.prototype.doorlogDevice = function(vdev) {
 
     if(!vdev) return;
     console.log("DoorEventLogging", "doorlogDevice: ", vdev.id);
-    console.log("DoorEventLogging","sourceDevice: ", this.config.sourceDevice.id);
+    console.log("DoorEventLogging","sourceDevice: ", this.config.sourceDevice);
     //Should this device be doorlogged? Look for it in the source
     if(this.config.sourceDevice.id === vdev.id) {//We have a match
 	//Doorlog this device
